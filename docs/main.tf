@@ -1,4 +1,4 @@
-terraform { 
+terraform {
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
@@ -8,26 +8,26 @@ terraform {
 }
 
 provider "docker" {
-  host = "npipe:////.//pipe//docker_engine"
+  host = "npipe:////.//pipe//docker_engine" # Para sistemas Windows
 }
 
+# Docker in Docker (DinD)
 resource "docker_image" "dind" {
   name         = "docker:24.0-dind"
   keep_locally = false
 }
 
 resource "docker_container" "dind" {
-  image = docker_image.dind.image_id
-  name  = "practicas-dind"
-
+  image       = docker_image.dind.image_id
+  name        = "practicas-dind"
+  privileged  = true
   ports {
-    internal = 80
-    external = 8000
+    internal = 2375
+    external = 2375
   }
-
-  privileged = true
 }
 
+# Jenkins
 resource "docker_image" "jenkins" {
   name = "custom-jenkins:latest"
 }
@@ -41,13 +41,8 @@ resource "docker_container" "jenkins" {
     external = 8080
   }
 
-  ports {
-    internal = 50000
-    external = 50000
-  }
-
   env = [
-    "JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration=false",
+     "JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration=false",
     "JENKINS_ADMIN_ID=admin",
     "JENKINS_ADMIN_PASSWORD=admin"
   ]
