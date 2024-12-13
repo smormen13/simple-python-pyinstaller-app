@@ -29,9 +29,8 @@ resource "docker_container" "dind" {
 }
 
 resource "docker_image" "jenkins" {
-  name = "custom-jenkins:latest"
   build {
-    context = "./" # Contexto del Dockerfile
+    context = "./"
   }
 }
 
