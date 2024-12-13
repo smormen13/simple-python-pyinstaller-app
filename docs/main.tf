@@ -42,7 +42,6 @@ resource "docker_container" "jenkins" {
   }
 
   env = [
-     "JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration=false",
     "JENKINS_ADMIN_ID=admin",
     "JENKINS_ADMIN_PASSWORD=admin"
   ]
