@@ -8,24 +8,7 @@ terraform {
 }
 
 provider "docker" {
-  host = "tcp://localhost:2375" # Conexión a través de TCP
-}
-
-# Docker in Docker (DinD)
-resource "docker_image" "dind" {
-  name         = "docker:24.0-dind"
-  keep_locally = false
-}
-
-resource "docker_container" "dind" {
-  image       = docker_image.dind.image_id
-  name        = "practicas-dind"
-  privileged  = true
-  entrypoint  = ["dockerd-entrypoint.sh", "--host=tcp://0.0.0.0:2375"]
-  ports {
-    internal = 2375
-    external = 2375
-  }
+  host = "npipe:////.//pipe//docker_engine" # Para sistemas Windows
 }
 
 # Jenkins
@@ -42,18 +25,42 @@ resource "docker_container" "jenkins" {
     external = 8080
   }
 
-  env = [
-    "JENKINS_ADMIN_ID=admin",
-    "JENKINS_ADMIN_PASSWORD=admin",
-    "JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration=false",
-    "DOCKER_HOST=tcp://practicas-dind:2375" # Configuración para que Jenkins se conecte a DinD
-  ]
-
-  volumes {
-    host_path      = "C:/jenkins_home"
-    container_path = "/var/jenkins_home"
+  ports {
+    internal = 50000
+    external = 50000
   }
 
-  depends_on = [docker_container.dind]
+  env = [
+    "JAVA_OPTS=-Djenkins.install.runSetupWizard=false"
+  ]
+
+  volumes = [
+    "C:/jenkins_home:/var/jenkins_home"
+  ]
+
 }
+# Docker in Docker (DinD)
+resource "docker_image" "dind" {
+  name         = "docker:24.0-dind"
+  keep_locally = false
+}
+
+resource "docker_container" "dind" {
+  image       = docker_image.dind.image_id
+  name        = "practicas-dind"
+  privileged  = true
+  ports {
+    internal = 2375
+    external = 2375
+  }
+
+  env = [
+    "DOCKER_TLS_CERTDIR=" # Desactiva TLS en DinD
+  ]
+
+  volumes = [
+    "/var/lib/docker" # Necesario para Docker
+  ]
+}
+
 
