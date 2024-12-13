@@ -143,7 +143,8 @@ Este documento proporciona una guía paso a paso para replicar el proceso de des
    - Dirígete al apartado **Pipeline** dentro de la configuración, en **Definition** selecciona la opción **Pipeline script from SMC**, selecciona **GIT** como SMC y copia la URL de tu repositorio en el apartado **Repository URL**.
    - Especifica */main* como rama a construir y pulsa en **GUARDAR**
 
-4.**Contruye el Pipeline**
-    - Pulsa en **Construir Ahora**
+4. **Contruir el Pipeline:**
+    - Pulsa en **Construir ahora**.
+
 
 ---
