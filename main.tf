@@ -1,4 +1,4 @@
-terraform {
+terraform { 
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
@@ -29,8 +29,10 @@ resource "docker_container" "dind" {
 }
 
 resource "docker_image" "jenkins" {
-  name         = "jenkins/jenkins:2.479.2-jdk17"
-  keep_locally = false
+  name = "custom-jenkins:latest"
+  build {
+    context = "./" # Contexto del Dockerfile
+  }
 }
 
 resource "docker_container" "jenkins" {
@@ -41,4 +43,14 @@ resource "docker_container" "jenkins" {
     internal = 8080
     external = 8080
   }
+
+  ports {
+    internal = 50000
+    external = 50000
+  }
+
+  env = [
+    "JENKINS_ADMIN_ID=admin",
+    "JENKINS_ADMIN_PASSWORD=admin"
+  ]
 }
