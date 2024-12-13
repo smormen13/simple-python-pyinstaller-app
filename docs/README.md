@@ -136,8 +136,6 @@ Este documento proporciona una guía paso a paso para replicar el proceso de des
    ```
 
 2. **Instalar Plugins Requeridos:**
-   - Docker Pipeline Plugin
-
 
 3. **Crear un Pipeline:**
    - Pulsa en **New Item**.
